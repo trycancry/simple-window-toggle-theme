@@ -5,3 +5,4 @@ A simple system tray utility that lets you quickly toggle between Windows 11 dar
 ![Demo](sample.gif)
 
 # Download
+https://github.com/yusteafy/simple-window-toggle-theme/releases/latest
