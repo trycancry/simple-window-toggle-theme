@@ -1,0 +1,5 @@
+main/
+x64/
+*.aps
+*.vcxproj.user
+.vs
