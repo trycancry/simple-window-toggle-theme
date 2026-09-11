@@ -1,0 +1,36 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build Release x64
+        shell: pwsh
+        run: msbuild main.vcxproj /m /p:Configuration=Release /p:Platform=x64 /p:PlatformToolset=v143
+
+      - name: Prepare artifact
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem -Path . -Recurse -Filter *.exe | Where-Object { $_.FullName -match 'x64\\Release' } | Select-Object -First 1
+          if (-not $exe) { throw 'Built EXE not found under x64\Release' }
+          New-Item -ItemType Directory -Force -Path artifact | Out-Null
+          Copy-Item $exe.FullName artifact\ToggleTheme.exe
+
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: ToggleTheme-windows-x64
+          path: artifact/ToggleTheme.exe
+          if-no-files-found: error
