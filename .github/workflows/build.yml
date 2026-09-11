@@ -20,6 +20,40 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
+      - name: Prepare build metadata
+        shell: pwsh
+        run: |
+          $refType = "${{ github.ref_type }}"
+          $refName = "${{ github.ref_name }}"
+
+          if ($refType -eq "tag") {
+            $exeName = "ToggleTheme-$refName.exe"
+            $artifactName = "ToggleTheme-$refName-windows-x64"
+            $versionString = $refName.TrimStart('v')
+
+            if ($refName -match '^v(\d+)\.(\d+)\.(\d+)(?:[-+].*)?$') {
+              $fileVersion = "$($Matches[1]),$($Matches[2]),$($Matches[3]),0"
+            }
+            else {
+              $fileVersion = "0,0,0,0"
+            }
+          }
+          else {
+            $exeName = "ToggleTheme-dev.exe"
+            $artifactName = "ToggleTheme-dev-windows-x64"
+            $versionString = "0.0.0-dev"
+            $fileVersion = "0,0,0,0"
+          }
+
+          @"
+          #pragma once
+          #define APP_FILE_VERSION $fileVersion
+          #define APP_FILE_VERSION_STRING "$versionString"
+          "@ | Set-Content -Path version.h -Encoding ascii
+
+          "EXE_NAME=$exeName" >> $env:GITHUB_ENV
+          "ARTIFACT_NAME=$artifactName" >> $env:GITHUB_ENV
+
       - name: Build Release x64
         shell: pwsh
         run: msbuild main.vcxproj /m /p:Configuration=Release /p:Platform=x64 /p:PlatformToolset=v143
@@ -30,13 +64,13 @@ jobs:
           $exe = Get-ChildItem -Path . -Recurse -Filter *.exe | Where-Object { $_.FullName -match 'x64\\Release' } | Select-Object -First 1
           if (-not $exe) { throw 'Built EXE not found under x64\Release' }
           New-Item -ItemType Directory -Force -Path artifact | Out-Null
-          Copy-Item $exe.FullName artifact\ToggleTheme.exe
+          Copy-Item $exe.FullName "artifact\${{ env.EXE_NAME }}"
 
       - name: Upload EXE artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ToggleTheme-windows-x64
-          path: artifact/ToggleTheme.exe
+          name: ${{ env.ARTIFACT_NAME }}
+          path: artifact/${{ env.EXE_NAME }}
           if-no-files-found: error
 
       - name: Create GitHub Release from tag
@@ -45,4 +79,4 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "${{ github.ref_name }}" artifact/ToggleTheme.exe --title "${{ github.ref_name }}" --generate-notes
+          gh release create "${{ github.ref_name }}" "artifact/${{ env.EXE_NAME }}" --title "${{ github.ref_name }}" --generate-notes
