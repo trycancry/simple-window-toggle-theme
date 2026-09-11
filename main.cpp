@@ -15,11 +15,10 @@ void ToggleTheme()
     if (RegOpenKeyExA(HKEY_CURRENT_USER, path, 0, KEY_ALL_ACCESS, &hKey) == ERROR_SUCCESS)
     {
         DWORD value = 1, size = sizeof(DWORD);
-        RegQueryValueExA(hKey, "SystemUsesLightTheme", NULL, NULL, (LPBYTE)&value, &size);
+        RegQueryValueExA(hKey, "AppsUseLightTheme", NULL, NULL, (LPBYTE)&value, &size);
 
         DWORD newValue = (value == 0) ? 1 : 0;
 
-        RegSetValueExA(hKey, "SystemUsesLightTheme", 0, REG_DWORD, (BYTE*)&newValue, sizeof(DWORD));
         RegSetValueExA(hKey, "AppsUseLightTheme", 0, REG_DWORD, (BYTE*)&newValue, sizeof(DWORD));
 
         RegCloseKey(hKey);
