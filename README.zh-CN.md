@@ -35,9 +35,9 @@
 
 可从 [Releases 页面](https://github.com/trycancry/simple-window-toggle-theme/releases) 下载正式发布版本。
 
-当前版本：[v1.0.0](https://github.com/trycancry/simple-window-toggle-theme/releases/tag/v1.0.0)
+当前版本：[v1.1.0](https://github.com/trycancry/simple-window-toggle-theme/releases/tag/v1.1.0)
 
-> v1.0.0 仅支持 **Apps only** 行为。可选“切换对象”功能目前位于 `main` 分支，计划用于下一个版本。
+v1.1.0 已加入可选“切换对象”功能，并会记住上一次选择的模式。
 
 ## 编译
 

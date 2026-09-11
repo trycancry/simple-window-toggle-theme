@@ -35,9 +35,9 @@ This means you can keep Windows itself permanently dark while toggling app color
 
 Download released builds from the [Releases page](https://github.com/trycancry/simple-window-toggle-theme/releases).
 
-Current release: [v1.0.0](https://github.com/trycancry/simple-window-toggle-theme/releases/tag/v1.0.0)
+Current release: [v1.1.0](https://github.com/trycancry/simple-window-toggle-theme/releases/tag/v1.1.0)
 
-> v1.0.0 supports the **Apps only** behavior. The selectable toggle target is currently on `main` and is intended for the next release.
+v1.1.0 adds selectable toggle targets and remembers the selected mode between launches.
 
 ## Build
 
